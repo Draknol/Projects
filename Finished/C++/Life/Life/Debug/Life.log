@@ -1,0 +1,22 @@
+﻿  Main.cpp
+C:\Users\reube\Documents\GitHub\Life\Life\Main.cpp(102,40): warning C4244: 'argument': conversion from 'int' to 'T', possible loss of data
+          with
+          [
+              T=float
+          ]
+C:\Users\reube\Documents\GitHub\Life\Life\Main.cpp(102,37): warning C4244: 'argument': conversion from 'int' to 'T', possible loss of data
+          with
+          [
+              T=float
+          ]
+C:\Users\reube\Documents\GitHub\Life\Life\Main.cpp(111,40): warning C4244: 'argument': conversion from 'int' to 'T', possible loss of data
+          with
+          [
+              T=float
+          ]
+C:\Users\reube\Documents\GitHub\Life\Life\Main.cpp(111,37): warning C4244: 'argument': conversion from 'int' to 'T', possible loss of data
+          with
+          [
+              T=float
+          ]
+  Life.vcxproj -> C:\Users\reube\Documents\GitHub\Life\Debug\Life.exe

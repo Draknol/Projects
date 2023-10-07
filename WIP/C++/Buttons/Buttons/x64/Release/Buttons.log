@@ -1,0 +1,13 @@
+﻿  Main.cpp
+C:\Users\reube\Documents\GitHub\GitStuff\Visual Studio\Buttons\Buttons\Main.cpp(135,26): warning C4018: '<': signed/unsigned mismatch
+C:\Users\reube\Documents\GitHub\GitStuff\Visual Studio\Buttons\Buttons\Main.cpp(140,26): warning C4018: '<': signed/unsigned mismatch
+C:\Users\reube\Documents\GitHub\GitStuff\Visual Studio\Buttons\Buttons\Main.cpp(152,15): warning C4018: '<': signed/unsigned mismatch
+C:\Users\reube\Documents\GitHub\GitStuff\Visual Studio\Buttons\Buttons\Main.cpp(153,15): warning C4018: '>': signed/unsigned mismatch
+C:\Users\reube\Documents\GitHub\GitStuff\Visual Studio\Buttons\Buttons\Main.cpp(154,15): warning C4018: '<': signed/unsigned mismatch
+C:\Users\reube\Documents\GitHub\GitStuff\Visual Studio\Buttons\Buttons\Main.cpp(155,15): warning C4018: '>': signed/unsigned mismatch
+  Generating code
+  2 of 210 functions ( 1.0%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    0 functions had inline decision re-evaluated but remain unchanged
+  Finished generating code
+  Buttons.vcxproj -> C:\Users\reube\Documents\GitHub\GitStuff\Visual Studio\Buttons\x64\Release\Buttons.exe
