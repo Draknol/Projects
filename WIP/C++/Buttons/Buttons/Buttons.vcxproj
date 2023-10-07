@@ -130,8 +130,8 @@
     <ClCompile Include="Main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\..\..\..\..\Downloads\masochism_2.ppm" />
     <None Include="Buttons.ppm" />
+    <None Include="masochism2.ppm" />
     <None Include="Output.ppm" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

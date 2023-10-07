@@ -6,12 +6,10 @@
 #include <cstdlib>
 using namespace std;
 
-#include <ctime>
-
 class pixel_class {
 private:
     int red, green, blue;
-    bool exclude;  // if true, do not check this pixel
+    bool exclude, holeExclude = false;  // if true, do not check this pixel
 public:
     void loaddata(int v1, int v2, int v3);
     void datatofile(fstream& ppmfile);
@@ -20,6 +18,8 @@ public:
     int getB() { return blue; }
     void setexclude(bool ex) { exclude = ex; }
     bool getexclude() { return exclude; }
+    void setholeexclude(bool ex) { holeExclude = ex; }
+    bool getholeexclude() { return holeExclude; }
 };
 
 void loadButtons();
@@ -27,8 +27,9 @@ void drawImage();
 void findButton();
 void drawBox(int x, int y);
 void lookAround(int x, int y);
+void lookIn(int x, int y);
 
-uint32_t total, xmin, xmax, ymin, ymax;  // MUST be global if used
+uint32_t total, holes, xmin, xmax, ymin, ymax;  // MUST be global if used
 int screenx, screeny, maxcolours;   // you must use these
 pixel_class picture[600][600];      // you must use this
 
@@ -51,7 +52,7 @@ void loadButtons() {
     int x, y, R, G, B;
     fstream infile;
     string infilename, line;
-    infilename = "Buttons.ppm";
+    infilename = "buttons.ppm";
     infile.open(infilename.c_str(), fstream::in);
     if (infile.is_open() == false) {
         cout << "ERROR: not able to open " << infilename << endl;
@@ -99,9 +100,9 @@ void drawImage()
 
 void findButton()
 {
-    for (int y = 0; y < screeny; y++)
+    for (int y = 0; y < screeny; y+=2)
     {
-        for (int x = 0; x < screenx; x++)
+        for (int x = 0; x < screenx; x+=2)
         {
             if (picture[x][y].getB() > 128 && !picture[x][y].getexclude()){
                 drawBox(x, y);
@@ -110,9 +111,24 @@ void findButton()
     }
 }
 
+void findHole()
+{
+    for (int y = ymin; y < ymax; y += 2)
+    {
+        for (int x = xmin; x < xmax; x += 2)
+        {
+            if (picture[x][y].getB() <= 128 && !picture[x][y].getholeexclude()) {
+                lookIn(x, y);
+                holes++;
+            }
+        }
+    }
+}
+
 void drawBox(int x, int y)
 {
     total = 0;
+    holes = 0;
     xmin = screenx;
     xmax = 0;
     ymin = screeny;
@@ -120,8 +136,13 @@ void drawBox(int x, int y)
 
     lookAround(x, y);
 
+    if (total < 500) return;
+
+    findHole();
+
     int color[3];
-    if (total > 7700)
+
+    if (total > 1900 && total < 2500 && holes == 8)
     {
         color[0] = 0;
         color[1] = 255;
@@ -148,7 +169,7 @@ void drawBox(int x, int y)
 
 void lookAround(int x, int y)
 {
-    if (picture[x][y].getexclude() == false && picture[x][y].getB() > 128)
+    if (picture[x][y].getexclude() == false && picture[x][y].getB() > 128 && x >= 1 && x < screenx - 10 && y >= 1 && y < screeny - 10)
     {
         picture[x][y].setexclude(true);
         if (x < xmin) xmin = x;
@@ -157,14 +178,32 @@ void lookAround(int x, int y)
         if (y > ymax) ymax = y;
         total++;
 
-        lookAround(x + 1, y);
-        lookAround(x - 1, y);
-        lookAround(x, y + 1);
-        lookAround(x, y - 1);
+        lookAround(x + 2, y);
+        lookAround(x - 2, y);
+        lookAround(x, y + 2);
+        lookAround(x, y - 2);
     }
     else 
     {
         picture[x][y].setexclude(true);
+        return;
+    }
+}
+
+void lookIn(int x, int y)
+{
+    if (picture[x][y].getholeexclude() == false && picture[x][y].getB() <= 128 && x >= xmin && x < xmax && y >= ymin && y < ymax)
+    {
+        picture[x][y].setholeexclude(true);
+
+        lookIn(x + 2, y);
+        lookIn(x - 2, y);
+        lookIn(x, y + 2);
+        lookIn(x, y - 2);
+    }
+    else
+    {
+        picture[x][y].setholeexclude(true);
         return;
     }
 }

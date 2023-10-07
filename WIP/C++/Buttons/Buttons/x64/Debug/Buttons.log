@@ -1,1 +1,14 @@
-﻿  Buttons.vcxproj -> C:\Users\reube\Documents\GitHub\GitStuff\Visual Studio\Buttons\x64\Debug\Buttons.exe
+﻿  Main.cpp
+C:\Users\reube\Documents\GitHub\Projects\WIP\C++\Buttons\Buttons\Main.cpp(121,26): warning C4018: '<': signed/unsigned mismatch
+C:\Users\reube\Documents\GitHub\Projects\WIP\C++\Buttons\Buttons\Main.cpp(123,30): warning C4018: '<': signed/unsigned mismatch
+C:\Users\reube\Documents\GitHub\Projects\WIP\C++\Buttons\Buttons\Main.cpp(165,26): warning C4018: '<': signed/unsigned mismatch
+C:\Users\reube\Documents\GitHub\Projects\WIP\C++\Buttons\Buttons\Main.cpp(170,26): warning C4018: '<': signed/unsigned mismatch
+C:\Users\reube\Documents\GitHub\Projects\WIP\C++\Buttons\Buttons\Main.cpp(182,15): warning C4018: '<': signed/unsigned mismatch
+C:\Users\reube\Documents\GitHub\Projects\WIP\C++\Buttons\Buttons\Main.cpp(183,15): warning C4018: '>': signed/unsigned mismatch
+C:\Users\reube\Documents\GitHub\Projects\WIP\C++\Buttons\Buttons\Main.cpp(184,15): warning C4018: '<': signed/unsigned mismatch
+C:\Users\reube\Documents\GitHub\Projects\WIP\C++\Buttons\Buttons\Main.cpp(185,15): warning C4018: '>': signed/unsigned mismatch
+C:\Users\reube\Documents\GitHub\Projects\WIP\C++\Buttons\Buttons\Main.cpp(202,85): warning C4018: '>=': signed/unsigned mismatch
+C:\Users\reube\Documents\GitHub\Projects\WIP\C++\Buttons\Buttons\Main.cpp(202,98): warning C4018: '<': signed/unsigned mismatch
+C:\Users\reube\Documents\GitHub\Projects\WIP\C++\Buttons\Buttons\Main.cpp(202,110): warning C4018: '>=': signed/unsigned mismatch
+C:\Users\reube\Documents\GitHub\Projects\WIP\C++\Buttons\Buttons\Main.cpp(202,123): warning C4018: '<': signed/unsigned mismatch
+  Buttons.vcxproj -> C:\Users\reube\Documents\GitHub\Projects\WIP\C++\Buttons\x64\Debug\Buttons.exe

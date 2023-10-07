@@ -26,7 +26,7 @@
     <None Include="Output.ppm">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="..\..\..\..\..\..\Downloads\masochism_2.ppm">
+    <None Include="masochism2.ppm">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
