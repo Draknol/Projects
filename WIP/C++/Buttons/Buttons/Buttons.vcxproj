@@ -131,6 +131,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Buttons.ppm" />
+    <None Include="masochism.ppm" />
     <None Include="masochism2.ppm" />
     <None Include="Output.ppm" />
   </ItemGroup>

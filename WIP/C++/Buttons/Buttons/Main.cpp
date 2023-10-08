@@ -1,21 +1,29 @@
 //Reuben Russell 23004666
 
+//------------------- Error Codes -------------------
+
+// 0 - Program executed successfully.
+// 2 - Failed to read from file
+// 3 - Failed to write to file
+
+//-------------- Classes and Functions --------------
+
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <cstdlib>
+
 using namespace std;
 
 class pixel_class {
 private:
-    int red, green, blue;
-    bool exclude, holeExclude = false;  // if true, do not check this pixel
+    uint8_t red, green, blue;
+    bool exclude, holeExclude = false;
 public:
+    uint8_t getR() { return red; }
+    uint8_t getG() { return green; }
+    uint8_t getB() { return blue; }
     void loaddata(int v1, int v2, int v3);
     void datatofile(fstream& ppmfile);
-    int getR() { return red; }
-    int getG() { return green; }
-    int getB() { return blue; }
     void setexclude(bool ex) { exclude = ex; }
     bool getexclude() { return exclude; }
     void setholeexclude(bool ex) { holeExclude = ex; }
@@ -29,24 +37,32 @@ void drawBox(int x, int y);
 void lookAround(int x, int y);
 void lookIn(int x, int y);
 
-uint32_t total, holes, xmin, xmax, ymin, ymax;  // MUST be global if used
-int screenx, screeny, maxcolours;   // you must use these
-pixel_class picture[600][600];      // you must use this
+pixel_class picture[600][600];
+uint32_t total, holes;
+uint32_t xmin, xmax, ymin, ymax;
+uint32_t screenx, screeny, maxcolours;
+
+//----------------------- Main ----------------------
 
 int main() {
 
-    // Step 1 : read in the image from Buttons.ppm
+    // Read in the image from Buttons.ppm
     loadButtons();
     
-    // Step 2 : identify buttons and draw boxes
+    // Identify buttons and draw boxes
     findButton();
     
-    // Step 3 : output the final .ppm file
+    // Output the final .ppm file
     drawImage();
+
+    cin >> total;
 
     return 0;
 }
 
+//--------------- Load Scan and Draw ----------------
+
+// Load pixel_class with image
 void loadButtons() {
     // load the picture from Buttons.ppm
     int x, y, R, G, B;
@@ -72,6 +88,7 @@ void loadButtons() {
     infile.close();
 }
 
+// Draw image with pixel_class
 void drawImage()
 {
     // load the picture to output.ppm
@@ -87,22 +104,23 @@ void drawImage()
     outfile << "# " + outfilename + '\n';  // this line is "# filename"
     outfile << to_string(screenx) + ' ' << to_string(screeny) + '\n';  // this line is the size
     outfile << to_string(maxcolours) + '\n';  // this line is 256
-    for (int y = 0; y < screeny; y++) {
-        for (int x = 0; x < screenx; x++) {
-            outfile << to_string(picture[x][y].getR()) + " "
-                    << to_string(picture[x][y].getG()) + " "
-                    << to_string(picture[x][y].getB()) + " ";
+    for (int y = 0; y < screeny; y++)
+    {
+        for (int x = 0; x < screenx; x++)
+        {
+            picture[x][y].datatofile(outfile);
         }
         outfile << endl;
     }
     outfile.close();
 }
 
+// Scans picture for buttons
 void findButton()
 {
-    for (int y = 0; y < screeny; y+=2)
+    for (int y = 0; y < screeny; y+=10)
     {
-        for (int x = 0; x < screenx; x+=2)
+        for (int x = 0; x < screenx; x+=10)
         {
             if (picture[x][y].getB() > 128 && !picture[x][y].getexclude()){
                 drawBox(x, y);
@@ -111,11 +129,12 @@ void findButton()
     }
 }
 
+// Scans button for holes
 void findHole()
 {
-    for (int y = ymin; y < ymax; y += 2)
+    for (int y = ymin; y < ymax; y += 1)
     {
-        for (int x = xmin; x < xmax; x += 2)
+        for (int x = xmin; x < xmax; x += 1)
         {
             if (picture[x][y].getB() <= 128 && !picture[x][y].getholeexclude()) {
                 lookIn(x, y);
@@ -125,6 +144,7 @@ void findHole()
     }
 }
 
+// Draws appropriate box around a given button
 void drawBox(int x, int y)
 {
     total = 0;
@@ -144,15 +164,17 @@ void drawBox(int x, int y)
 
     if (total > 1900 && total < 2500 && holes == 8)
     {
-        color[0] = 0;
-        color[1] = 255;
-        color[2] = 0;
+        // Green
+        color[0] = 0x00;
+        color[1] = 0xFF;
+        color[2] = 0x00;
     }
     else
     {
-        color[0] = 255;
-        color[1] = 0;
-        color[2] = 0;
+        // Red
+        color[0] = 0xFF;
+        color[1] = 0x00;
+        color[2] = 0x00;
     }
 
     for (int i = xmin; i < xmax; i++)
@@ -167,16 +189,18 @@ void drawBox(int x, int y)
     }
 }
 
+// Looks around a button to find it all
 void lookAround(int x, int y)
 {
-    if (picture[x][y].getexclude() == false && picture[x][y].getB() > 128 && x >= 1 && x < screenx - 10 && y >= 1 && y < screeny - 10)
+    if (picture[x][y].getexclude() == false && picture[x][y].getB() > 128 && x >= 1 && x < screenx && y >= 1 && y < screeny)
     {
         picture[x][y].setexclude(true);
-        if (x < xmin) xmin = x;
-        if (x > xmax) xmax = x;
-        if (y < ymin) ymin = y;
-        if (y > ymax) ymax = y;
         total++;
+
+        if (x < xmin) xmin = x;
+        else if (x > xmax) xmax = x;
+        if (y < ymin) ymin = y;
+        else if (y > ymax) ymax = y;
 
         lookAround(x + 2, y);
         lookAround(x - 2, y);
@@ -190,16 +214,17 @@ void lookAround(int x, int y)
     }
 }
 
+// Looks in a button for holes
 void lookIn(int x, int y)
 {
     if (picture[x][y].getholeexclude() == false && picture[x][y].getB() <= 128 && x >= xmin && x < xmax && y >= ymin && y < ymax)
     {
         picture[x][y].setholeexclude(true);
 
-        lookIn(x + 2, y);
-        lookIn(x - 2, y);
-        lookIn(x, y + 2);
-        lookIn(x, y - 2);
+        lookIn(x + 1, y);
+        lookIn(x - 1, y);
+        lookIn(x, y + 1);
+        lookIn(x, y - 1);
     }
     else
     {
@@ -208,15 +233,19 @@ void lookIn(int x, int y)
     }
 }
 
-//--------------- methods for the pixel_class ------------
+
+//------------- Methods for pixel_class -------------
+
+// Load colors into pixel
 void pixel_class::loaddata(int v1, int v2, int v3) {
-    red = v1;
-    green = v2;
-    blue = v3;
+    red    = v1;
+    green  = v2;
+    blue   = v3;
 }
 
+// Loads colors from pixel
 void pixel_class::datatofile(fstream& ppmfile) {
-    // write the data for one pixel to the ppm file
-    ppmfile << red << " " << green;
-    ppmfile << " " << blue << "  ";
+    ppmfile <<  to_string(red)    << " "
+            <<  to_string(green)  << " "
+            <<  to_string(blue)   << "  ";
 }
