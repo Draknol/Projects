@@ -26,11 +26,5 @@
     <None Include="Output.ppm">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="masochism2.ppm">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="masochism.ppm">
-      <Filter>Resource Files</Filter>
-    </None>
   </ItemGroup>
 </Project>

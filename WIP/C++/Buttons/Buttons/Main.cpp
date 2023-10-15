@@ -1,23 +1,24 @@
 //Reuben Russell 23004666
 
-//------------------- Error Codes -------------------
-
-// 0 - Program executed successfully.
-// 2 - Failed to read from file
-// 3 - Failed to write to file
-
-//-------------- Classes and Functions --------------
-
 #include <iostream>
 #include <fstream>
 #include <string>
 
 using namespace std;
 
+//------------------- Error Codes -------------------
+
+// 0 - Program executed successfully.
+// 2 - Failed to read from file
+// 3 - Failed to write to file
+
+
+//-------------- Classes and Functions --------------
+
 class pixel_class {
 private:
-    uint8_t red, green, blue;
-    bool exclude, holeExclude = false;
+    uint8_t red = 0, green = 0, blue = 0;
+    bool exclude = false, holeExclude = false;
 public:
     uint8_t getR() { return red; }
     uint8_t getG() { return green; }
@@ -31,16 +32,18 @@ public:
 };
 
 void loadButtons();
-void drawImage();
 void findButton();
 void drawBox(int x, int y);
 void lookAround(int x, int y);
+void findHole();
 void lookIn(int x, int y);
+void drawImage();
 
 pixel_class picture[600][600];
-uint32_t total, holes;
-uint32_t xmin, xmax, ymin, ymax;
-uint32_t screenx, screeny, maxcolours;
+int total, holes;
+int xmin, xmax, ymin, ymax;
+int screenx, screeny, maxcolours;
+
 
 //----------------------- Main ----------------------
 
@@ -55,14 +58,13 @@ int main() {
     // Output the final .ppm file
     drawImage();
 
-    cin >> total;
-
     return 0;
 }
 
+
 //--------------- Load Scan and Draw ----------------
 
-// Load pixel_class with image
+// Load picture from file
 void loadButtons() {
     // load the picture from Buttons.ppm
     int x, y, R, G, B;
@@ -88,33 +90,6 @@ void loadButtons() {
     infile.close();
 }
 
-// Draw image with pixel_class
-void drawImage()
-{
-    // load the picture to output.ppm
-    fstream outfile;
-    string outfilename;
-    outfilename = "Output.ppm";
-    outfile.open(outfilename.c_str(), fstream::out);
-    if (outfile.is_open() == false) {
-        cout << "ERROR: not able to open " << outfilename << endl;
-        exit(3);
-    }
-    outfile << "P3\n";  // this line is "P3"
-    outfile << "# " + outfilename + '\n';  // this line is "# filename"
-    outfile << to_string(screenx) + ' ' << to_string(screeny) + '\n';  // this line is the size
-    outfile << to_string(maxcolours) + '\n';  // this line is 256
-    for (int y = 0; y < screeny; y++)
-    {
-        for (int x = 0; x < screenx; x++)
-        {
-            picture[x][y].datatofile(outfile);
-        }
-        outfile << endl;
-    }
-    outfile.close();
-}
-
 // Scans picture for buttons
 void findButton()
 {
@@ -124,21 +99,6 @@ void findButton()
         {
             if (picture[x][y].getB() > 128 && !picture[x][y].getexclude()){
                 drawBox(x, y);
-            }
-        }
-    }
-}
-
-// Scans button for holes
-void findHole()
-{
-    for (int y = ymin; y < ymax; y += 1)
-    {
-        for (int x = xmin; x < xmax; x += 1)
-        {
-            if (picture[x][y].getB() <= 128 && !picture[x][y].getholeexclude()) {
-                lookIn(x, y);
-                holes++;
             }
         }
     }
@@ -156,12 +116,13 @@ void drawBox(int x, int y)
 
     lookAround(x, y);
 
-    if (total < 500) return;
+    if (total < 200) return;
 
     findHole();
 
     int color[3];
 
+    // Check if its broken
     if (total > 1900 && total < 2500 && holes == 8)
     {
         // Green
@@ -177,11 +138,14 @@ void drawBox(int x, int y)
         color[2] = 0x00;
     }
 
+
+    // Draw box
     for (int i = xmin; i < xmax; i++)
     {
         picture[i][ymax].loaddata(color[0], color[1], color[2]);
         picture[i][ymin].loaddata(color[0], color[1], color[2]);
     }
+
     for (int j = ymin; j < ymax; j++)
     {
         picture[xmin][j].loaddata(color[0], color[1], color[2]);
@@ -207,14 +171,25 @@ void lookAround(int x, int y)
         lookAround(x, y + 2);
         lookAround(x, y - 2);
     }
-    else 
+    else picture[x][y].setexclude(true);
+}
+
+// Scans button for holes
+void findHole()
+{
+    for (int y = ymin; y < ymax; y += 1)
     {
-        picture[x][y].setexclude(true);
-        return;
+        for (int x = xmin; x < xmax; x += 1)
+        {
+            if (picture[x][y].getB() <= 128 && !picture[x][y].getholeexclude()) {
+                lookIn(x, y);
+                holes++;
+            }
+        }
     }
 }
 
-// Looks in a button for holes
+// Looks around a hole to find it all
 void lookIn(int x, int y)
 {
     if (picture[x][y].getholeexclude() == false && picture[x][y].getB() <= 128 && x >= xmin && x < xmax && y >= ymin && y < ymax)
@@ -226,11 +201,35 @@ void lookIn(int x, int y)
         lookIn(x, y + 1);
         lookIn(x, y - 1);
     }
-    else
-    {
-        picture[x][y].setholeexclude(true);
-        return;
+    else picture[x][y].setholeexclude(true);
+}
+
+// Load file from picture
+void drawImage()
+{
+    // load the picture to output.ppm
+    fstream outfile;
+    string outfilename;
+    outfilename = "Output.ppm";
+    outfile.open(outfilename.c_str(), fstream::out);
+    if (outfile.is_open() == false) {
+        cout << "ERROR: not able to open " << outfilename << endl;
+        exit(3);
     }
+    outfile << "P3\n";  // this line is "P3"
+    outfile << "# " + outfilename + '\n';  // this line is "# filename"
+    outfile << to_string(screenx) + ' ' << to_string(screeny) + '\n';  // this line is the size
+    outfile << to_string(maxcolours) + '\n';  // this line is 256
+    for (int y = 0; y < screeny; y++)
+    {
+        for (int x = 0; x < screenx; x++)
+        {
+            picture[x][y].datatofile(outfile);
+        }
+        outfile << endl;
+    }
+    outfile.close();
+    cout << "Image saved to " << outfilename;
 }
 
 
